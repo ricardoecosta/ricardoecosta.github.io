@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Wedding</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="app.css">
+  <style>
+    img {
+      width: 100%;
+    }
+
+    .hiddenFileInput {
+      display: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- HOME -->
+  <div class="app-page" data-page="home">
+    <div class="app-topbar">
+      <div class="app-title">Sandra e André</div>
+    </div>
+    <div class="app-content">
+      <div class="app-section">
+        <img src="img/home.jpg" />
+      </div>
+      <div class="app-section app-list">
+        <div class="app-button blue" data-target="snap">Partilhar Foto</div>
+        <div class="app-button blue" data-target="message">Partilhar Mensagem</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEND SNAP -->
+  <div class="app-page" data-page="snap">
+    <div class="app-topbar">
+      <div class="app-button left" data-back></div>
+      <div class="app-title">Partilhar Fotografia</div>
+    </div>
+    <div class="app-content">
+      <input id="snapInput" type="file" capture="camera" accept="image/*" class="hiddenFileInput"/>
+      <div class="app-section app-list">
+        <div id="takeSnapButton" class="app-button blue">Tirar Foto</div>
+        <div id="sendSnapButton" class="app-button green">Enviar</div>
+      </div>
+      <div id="snapPreviewSection" class="app-section" style="display: none">
+        <img id="snapPreview" />
+      </div>
+    </div>
+  </div>
+
+  <!-- SEND MESSAGE -->
+  <div class="app-page" data-page="message">
+    <div class="app-topbar">
+      <div class="app-button left" data-back></div>
+      <div class="app-title">Partilhar Mensagem</div>
+    </div>
+    <div class="app-content">
+      <div class="app-section">
+        <input id="messageSender" class="app-input" placeholder="Remetente">
+        <textarea id="messageBody" class="app-input" placeholder="Mensagem" maxlength="500"></textarea>
+        <div id="sendMessageButton" class="app-button green">Send</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="zepto.js"></script>
+  <script src="app.min.js"></script>
+  <script>
+    App.controller('home', function(page) {
+      // todo
+    });
+
+    //
+    // SEND SNAP
+    //
+    App.controller('snap', ShareSnapController);
+
+    function ShareSnapController(page) {
+    }
+
+    ShareSnapController.prototype.onReady = function(page) {
+      var snapInput = $("#snapInput");
+
+      $("#takeSnapButton").on("click", function(event) {
+        snapInput.trigger("click");
+      });
+
+      snapInput.on("change", function(event) {
+        if (event.target.files.length === 1) {
+          var firstFile = event.target.files[0];
+
+          if (firstFile.type.indexOf("image/") === 0) {
+            $("#snapPreview").attr("src", URL.createObjectURL(firstFile));
+            $("#snapPreviewSection").show();
+          }
+        }
+      });
+
+      $("#sendSnapButton").on("click", function(event) {
+        successDialog(
+          "Fotografia Enviada",
+          "A sua fotografia será eventualmente apresentada nas televisões do salão."
+        );
+      });
+    }
+
+    //
+    // SEND MESSAGE
+    //
+    App.controller('message', SendMessageController);
+
+    function SendMessageController(page) {
+    }
+
+    SendMessageController.prototype.onReady = function(page) {
+      $("#sendMessageButton").on("click", function(event) {
+        successDialog(
+          "Mensagem Enviada",
+          "A sua mensagem será eventualmente apresentada nas televisões do salão."
+        );
+      });
+    }
+
+    //
+    // utils
+    //
+    function successDialog(title, text) {
+      App.dialog({
+        title        : title,
+        text         : text,
+        okButton     : 'Voltar'
+      });
+    }
+
+    App.load('home');
+  </script>
+</body>
+
+</html>
